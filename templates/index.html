@@ -54,10 +54,18 @@
 				// Encrypt the post object
 				var encryptedPostString = crypto_util.encrypt(key, iv, postString);
 				// Construct the post request object
-				var postRequest = { "keyword": keyword, "content": encryptedPostString, 
-					"content-hash": crypto_util.hash(postString) };
+				var postRequest = { "keyword": keyword, "content": encryptedPostString.ciphertext, 
+					"content-iv": encryptedPostString.iv, "content-hash": crypto_util.hash(postString) };
 
-				console.log(postRequest);
+				$.ajax({
+					type: "POST",
+					url: "/new_post",
+					data: postRequest,
+					success: function(response){
+						// Reload the page once a response is received.
+						location.reload();
+					}
+				});
 			}
 		</script>
 	</head>
