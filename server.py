@@ -8,7 +8,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_restful import Resource, Api
 import redis, json
 
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
+redis_conn = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 app = Flask(__name__)
 api = Api(app)
@@ -21,22 +21,16 @@ def index():
 
 @api.resource('/upload')
 class Upload(Resource):
-
 	def rs_index(self, content, content_iv, content_hash, keyword):
 		doc = {'content': content, 'content-iv': content_iv, 'content-hash': content_hash }
-		print keyword
-		r.set(keyword, json.dumps(doc))
-
+		redis_conn.rpush(keyword, json.dumps(doc))
 
 	def post(self):
 		content 	 = request.form.get('content')
 		content_iv   = request.form.get('content-iv')
 		content_hash = request.form.get('content-hash')
 		keyword 	 = request.form.get('keyword')
-		print content
-		print content_iv
-		print content_hash
-		print keyword
+
 		if not content or not content_iv or not content_hash or not keyword:
 			return jsonify(success=False)
 		self.rs_index(content, content_iv, content_hash, keyword)
@@ -46,25 +40,16 @@ class Upload(Resource):
 @api.resource('/search')
 class Search(Resource):
 
-	def rs_retrieve(self, keyword):
-		print r.get(keyword)
-		return r.get(keyword)
-
-	def rs_indexed(self, keyword):
-		if r.get(keyword):
-			return True
-		return False
-
 	def post(self):
-		keyword 	 = request.form.get('keyword')
-		print keyword
-		if not keyword or not self.rs_indexed(keyword):
+		keyword = request.form.get('keyword')
+
+		results = redis_conn.lrange(keyword, 0, -1)
+		print len(results)
+
+		if not keyword or not results or len(results) == 0:
 			return jsonify(success=False, content=None, content_iv = None, content_hash = None)
 		else:
-			raw = self.rs_retrieve(keyword)
-			doc = json.loads(raw)
-			print doc
-			return jsonify(success=True, content=doc["content"], content_iv=doc["content-iv"], content_hash=doc["content-hash"])
+			return jsonify(success=True, results=results[0:10])
 
 if __name__ == '__main__':
     app.run(debug=True)

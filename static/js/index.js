@@ -11,19 +11,29 @@ function saveImageData(){
 	});
 }
 
+function switchEntry(){
+	var option = $('#command-input').val();
+	$('#upload-entry').css('display','none');
+	$('#search-entry').css('display','none');
+	if(option == 'upload'){
+		$('#upload-entry').css('display','block');
+	} else{
+		$('#search-entry').css('display','block');
+	}
+}
+
 /**
  * Submits a request to post an image/blurb to the server.
  */
 function uploadContent(){
 	// Retrieve the password
-	var password = $("#passphrase-entry").val();
+	var password = $("#upload-passphrase-entry").val();
 	var stretched_password = crypto_util.stretch_password(password);
 	var key = stretched_password.stretched;
 	//var keyword = stretched_password.verifier;
 
-	var keyword = $("#keyword-entry").val();
-
-	keyword = crypto_util.hash(keyword.concat(password))
+	var keyword = $("#upload-keyword-entry").val()
+	keyword = crypto_util.hash(keyword.concat(key).concat(stretched_password.verifier));
 	
 	// Retrieve random IV
 	var iv = crypto_util.random_iv();
@@ -48,9 +58,8 @@ function uploadContent(){
 			$("#keysent").text( keyword);
 			$("#imageupload").attr("src", JSON.parse(postString).image);
 			$("#commentupload").text( JSON.parse(postString).comment);
-
-			console.log("data:image/png;ascii," + encryptedPostString.ciphertext);			
-			//location.reload();
+		
+			location.reload();
 		}
 	});
 }
@@ -60,14 +69,14 @@ function uploadContent(){
  */
 function searchContent(){
 	// Retrieve the password
-	var password = $("#searchsecret-entry").val();
+	var password = $("#search-passphrase-entry").val();
 	var stretched_password = crypto_util.stretch_password(password);
 	var key = stretched_password.stretched;
 	//var keyword = stretched_password.verifier;
 
-	var keyword_hash = $("#searchterm-entry").val();
+	var keyword_hash = $("#text-keyword-entry").val();
 
-	var keyword = crypto_util.hash(keyword_hash.concat(password))
+	var keyword = crypto_util.hash(keyword_hash.concat(key).concat(stretched_password.verifier))
 
 	// Construct the post request object
 	var postRequest = { "keyword": JSON.stringify(keyword) };
@@ -78,13 +87,25 @@ function searchContent(){
 			url: "/search",
 			data: postRequest,
 			success: function(response){
-				console.log(response.success)
+				console.log(response.success);
 				if( response.success == true){
-					var decryptedContent = crypto_util.decrypt(key, response.content_iv, response.content);
-					$("#keyreceived").text( keyword);
-					$("#image").attr("src", JSON.parse(decryptedContent).image);
-					$('#comment').html(JSON.parse(decryptedContent).comment);
-					console.log(JSON.parse(decryptedContent).comment);
+					console.log(response);
+					$('#result-display').empty();
+					for(var i = 0; i < response.results.length; i++){
+						var r = JSON.parse(response.results[i]);
+						var decryptedContent = JSON.parse(crypto_util.decrypt(key, r["content-iv"], r.content));
+
+						$('#result-display').append(
+							"<div class='result'>"+
+								"<img class='result-img' src='"+decryptedContent.image+"'/>"+
+								decryptedContent.comment+
+							"</div>"
+						);
+						// $("#keyreceived").text( keyword);
+						// $("#image").attr("src", JSON.parse(decryptedContent).image);
+						// $('#comment').html(JSON.parse(decryptedContent).comment);
+						// console.log(JSON.parse(decryptedContent).comment);
+					}
 				}
 				else {
 

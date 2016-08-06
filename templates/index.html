@@ -18,85 +18,40 @@
 		<script src="/static/js/crypto_util.js"></script> <!-- Simpler crypto api -->
 
 		<script src="/static/js/index.js"></script>
-   		<script src="/static/js/bootstrap.min.js"></script>
+		
       	<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
     	<link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
-		
 
+    	<link rel="stylesheet" type="text/css" href="/static/css/index.css">
 	</head>
 	<body>
 
-	<nav class="navbar navbar-default">
-	  <div class="container-fluid">
-	    <!-- Brand and toggle get grouped for better mobile display -->
-	    <div class="navbar-header">
-	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-	        <span class="sr-only">Toggle navigation</span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	      </button>
-	      <a class="navbar-brand" href="#">Anonynomous Searchable Sharing Platform </a>
-	    </div>
-
-
-	     
-	    </div><!-- /.navbar-collapse -->
-	  </div><!-- /.container-fluid -->
-	</nav>
-
-	<!-- of course, you should move the inline CSS style to your stylesheet -->
-	<!-- main container, width = 70% of page, centered -->
-	<div id="contentBox" style="margin:0px auto; width:90%">
-
-	 <!-- columns divs, float left, no margin so there is no space between column, width=1/3 -->
-	    <div id="column1" style="float:left; margin:0; width:50%;">
-
-			Enter Shared Secret: <br> <input type="text" id='passphrase-entry'> 
-			<br><br>
-			Enter a Keyword: <br> <input type="text" id='keyword-entry'> <div id='keysent'></div>
-			<br>
-			Choose an Image: <br> <input type="file" onchange="saveImageData()" id='image-upload'>
-
-
-			<br>
-			Enter a Comment:
-			<br>
-			<textarea id='text-entry' placeholder='Enter a comment here...'></textarea>
-			<button id='post-submit-button' onclick='uploadContent()'>Post</button>
-
-			<br>
-	 		<img id='imageupload' src='/static/image.jpg' title='' height="400" width="400"> 
-	 		<br>
-	 		<div id='commentupload'></div>
-
-
-	    </div>
-
-	    <div id="column2" style="float:left; margin:0;width:50%;">
-
-			Enter the Shared Secret:  <input type="text" id='searchsecret-entry'>
-			<br>
-			Enter a Search Term:  <input type="text" id='searchterm-entry'> <br> 
-			<div id='keyreceived'></div>
-
-			<button id='post-submit-button' onclick='searchContent()'>Get</button>
-			<br>
-	 		<img id='image' src='/static/image.jpg' title='' height="400" width="400"> 
-			<div id='comment'></div>
-
-	    </div>
-
-
+	<span id='header'>Blacklist Anonymous Search</span>
+	<div id='cmd-entry'>
+		<span>Enter a command></span>
+		<input type='text' id="command-input" placeholder="[upload|search]"/>
+		<span class='button' id='cmd-go' onclick="switchEntry()">Go</button>
 	</div>
 
-
-
-		<br>
-		<br>
-
-
-
+	<div id='upload-entry' style='display:none'>
+		<br/>
+		<input type='password' id="upload-passphrase-entry" placeholder="Enter a passphrase."/>
+		<input type='text' id="upload-keyword-entry" placeholder="Enter a keyword."/>
+		<br/><br/>
+		<input type="file" onchange="saveImageData()" id='image-upload'>
+		<br/>
+		<textarea id='text-entry' placeholder='Enter a comment here...'></textarea>
+		<span class='button' id='post-submit-button' onclick='uploadContent()'>Post</button>
+	</div>
+	<br/>
+	<div id='search-entry'>
+		<input type='password' id="search-passphrase-entry" placeholder="Enter a passphrase."/>
+		<input type='text' id="text-keyword-entry" placeholder="Enter a keyword."/>
+		<span class='button' id='post-submit-button' onclick='searchContent()'>Search</button>
+		<br/>
+		<br/>
+		<div id='result-display'></div>
+	</div>
 
 	</body>
 </html>

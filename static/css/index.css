@@ -1,0 +1,70 @@
+body{
+	background-color: #080808;
+	color: #bcbcbc;
+	font-family: "Courier New", Courier, monospace;
+}
+
+input{
+	 background-color: #1c1c1c;
+	 outline: none;
+	 border: 1px solid #bcbcbc;
+	 padding: 3px;
+	 border-radius: 2px;
+}
+
+textarea{
+	 background-color: #080808;
+	 outline: none;
+	 border: none;
+	 padding: 5px;
+	 width: 100%;
+}
+
+#header{
+	display: block;
+	position: relative;
+	font-weight: bold;
+	padding: 5px;
+	font-size: 25px;
+}
+
+#cmd-entry{
+	padding: 5px;
+}
+
+#upload-entry{
+	padding: 5px;
+	display: block;
+}
+
+#search-entry{
+	padding: 5px;
+	display: block;
+	position: relative;
+	width: 100%;
+}
+
+.button{
+	background-color: #005f00;
+	padding: 3px;
+	cursor: pointer;
+}
+
+.button:hover{
+	background-color: #008700;
+}
+
+.result{
+	width: 200px;
+	display: inline-block;
+	background-color: #1c1c1c;
+	padding: 5px;
+	border-radius: 3px;
+	margin: 3px;
+	vertical-align: top;
+}
+
+.result-img{
+	max-width: 190px;
+	display: block;
+}
