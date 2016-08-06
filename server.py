@@ -24,14 +24,19 @@ class Upload(Resource):
 
 	def rs_index(self, content, content_iv, content_hash, keyword):
 		doc = {'content': content, 'content-iv': content_iv, 'content-hash': content_hash }
+		print keyword
 		r.set(keyword, json.dumps(doc))
+
 
 	def post(self):
 		content 	 = request.form.get('content')
 		content_iv   = request.form.get('content-iv')
 		content_hash = request.form.get('content-hash')
 		keyword 	 = request.form.get('keyword')
-
+		print content
+		print content_iv
+		print content_hash
+		print keyword
 		if not content or not content_iv or not content_hash or not keyword:
 			return jsonify(success=False)
 		self.rs_index(content, content_iv, content_hash, keyword)
@@ -52,11 +57,13 @@ class Search(Resource):
 
 	def post(self):
 		keyword 	 = request.form.get('keyword')
+		print keyword
 		if not keyword or not self.rs_indexed(keyword):
 			return jsonify(success=False, content=None, content_iv = None, content_hash = None)
 		else:
 			raw = self.rs_retrieve(keyword)
 			doc = json.loads(raw)
+			print doc
 			return jsonify(success=True, content=doc["content"], content_iv=doc["content-iv"], content_hash=doc["content-hash"])
 
 if __name__ == '__main__':
