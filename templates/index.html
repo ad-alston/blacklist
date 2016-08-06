@@ -17,66 +17,44 @@
 
 		<script src="/static/js/crypto_util.js"></script> <!-- Simpler crypto api -->
 
-		<script>
-			// DOM element that will be used to displaly the chosen image.
-			var currentImageData = null;
-			
-			// onchange() callback for the image form item; reads the image data
-			function saveImageData(){
-				var imageFile = $('#image-upload')[0].files[0];
-				
-				image_reader.read_image_data(imageFile, function(data){
-					
-					currentImageData = data;
-					// var pt = crypto_util.decrypt(key, iv, ct.ciphertext);
+		<script src="/static/js/index.js"></script>
+   		<script src="/static/js/bootstrap.min.js"></script>
+      	<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    	<link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
+		
 
-					// testDisplayDOMElement.src = pt;
-				});
-			}
-
-			/**
-			 * Submits a request to post an image/blurb to the server.
-			 */
-			function submitPostRequest(){
-				// Retrieve the password
-				var password = $("#passphrase-entry").val();
-				var stretched_password = crypto_util.stretch_password(password);
-				var key = stretched_password.stretched;
-				var keyword = stretched_password.verifier;
-
-				// Retrieve random IV
-				var iv = crypto_util.random_iv();
-
-				// Construct the post object
-				var postObject = { "image": currentImageData, "comment": $('#text-entry').val() };
-				var postString = JSON.stringify(postObject);
-
-				// Encrypt the post object
-				var encryptedPostString = crypto_util.encrypt(key, iv, postString);
-				// Construct the post request object
-				var postRequest = { "keyword": keyword, "content": encryptedPostString.ciphertext, 
-					"content-iv": encryptedPostString.iv, "content-hash": crypto_util.hash(postString) };
-
-				$.ajax({
-					type: "POST",
-					url: "/new_post",
-					data: postRequest,
-					success: function(response){
-						// Reload the page once a response is received.
-						location.reload();
-					}
-				});
-			}
-		</script>
 	</head>
 	<body>
+
+
+
+
+
 		ENTER A SEKRIT CODE:  <input type="text" id='passphrase-entry'>
+		<br>
+		ENTER A KEYWORD: <input type="text" id='keyword-entry'>
 		<br>
 		UPLOAD AN IMAGE:  <input type="file" onchange="saveImageData()" id='image-upload'>
 		<br>
 		ENTER SOME TEXT:
 		<br>
 		<textarea id='text-entry' placeholder='WHAT DO YOU WANT TO SAY ABOUT IT?'></textarea>
-		<button id='post-submit-button' onclick='submitPostRequest()'>Post</button>
+		<button id='post-submit-button' onclick='uploadContent()'>Post</button>
+
+		<br>
+		<br>
+
+
+		ENTER A  SERCH TERM:  <input type="text" id='searchterm-entry'>
+		<br>
+		ENTER A SEKRIT CODE:  <input type="text" id='searchsecret-entry'>
+		<br>
+		<button id='post-submit-button' onclick='searchContent()'>Get</button>
+
+
+		<br>
+ 		<img id='image' src='' title='' height="400" width="400"> 
+		<div id='comment'></div>
+
 	</body>
 </html>
