@@ -1,0 +1,37 @@
+<html>
+	<head>
+		<title>Blacklist: git gud or git rekt</title>
+		
+		<!-- JQuery (from CDN) to make things easier on the front end. -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+		<script src="/static/js/image_reader.js"></script> <!-- Image reading -->
+
+		<script>
+			// DOM element that will be used to displaly the chosen image.
+			var testDisplayDOMElement = null;
+
+			$(document).ready(function(){
+				testDisplayDOMElement = $('#test-display')[0];
+			});
+			
+			// onchange() callback for the image form item; reads the image data
+			function retrieveImageData(){
+				var imageFile = $('#image-upload')[0].files[0];
+				
+				image_reader.read_image_data(imageFile, function(data){
+					testDisplayDOMElement.src = data;
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<img id='test-display' style='max-width: 300px; max-height: 300px'/><br/>
+		UPLOAD AN IMAGE:  <input type="file" onchange="retrieveImageData()" id='image-upload'>
+		<br>
+		ENTER SOME TEXT:
+		<br>
+		<textarea id='text-entry' placeholder='WHAT DO YOU WANT TO SAY ABOUT IT?'></textarea>
+
+	</body>
+</html>
