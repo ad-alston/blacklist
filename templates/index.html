@@ -7,6 +7,16 @@
 
 		<script src="/static/js/image_reader.js"></script> <!-- Image reading -->
 
+		<script src="/static/js/lib/core-min.js"></script> <!-- CryptoJS core -->
+		<script src="/static/js/lib/cipher-core-min.js"></script> <!-- CryptoJS core -->
+		<script src="/static/js/lib/aes-min.js"></script> <!-- AES encryption -->
+		<script src="/static/js/lib/enc-utf16-min.js"></script> <!-- UTF-16 encoding  -->
+		<script src="/static/js/lib/enc-base64-min.js"></script> <!-- Base64 encoding -->
+		<script src="/static/js/lib/pbkdf2-min.js"></script>
+		<script src="/static/js/lib/sha256-min.js"></script>
+
+		<script src="/static/js/crypto_util.js"></script> <!-- Simpler crypto api -->
+
 		<script>
 			// DOM element that will be used to displaly the chosen image.
 			var testDisplayDOMElement = null;
@@ -20,8 +30,32 @@
 				var imageFile = $('#image-upload')[0].files[0];
 				
 				image_reader.read_image_data(imageFile, function(data){
-					testDisplayDOMElement.src = data;
+					//console.log(data[0]);
+					var stretched_pass = crypto_util.stretch_password("my keyword");
+					var key = stretched_pass.stretched;
+
+					var iv = crypto_util.random_iv();
+
+					var ct = crypto_util.encrypt(key, iv, data);
+					var pt = crypto_util.decrypt(key, iv, ct.ciphertext);
+
+					testDisplayDOMElement.src = pt;
 				});
+			}
+
+			function textTest(){
+				var text = $('#text-entry').val();
+
+				var stretched_pass = crypto_util.stretch_password("my keyword");
+
+				var key = stretched_pass.stretched;
+				var iv  = crypto_util.random_iv();
+
+				var ct = crypto_util.encrypt(key, iv, text);
+
+				var pt = crypto_util.decrypt(key, iv, ct.ciphertext)
+
+				console.log(pt);
 			}
 		</script>
 	</head>
@@ -31,7 +65,7 @@
 		<br>
 		ENTER SOME TEXT:
 		<br>
-		<textarea id='text-entry' placeholder='WHAT DO YOU WANT TO SAY ABOUT IT?'></textarea>
+		<textarea id='text-entry' placeholder='WHAT DO YOU WANT TO SAY ABOUT IT?' oninput='textTest()'></textarea>
 
 	</body>
 </html>
