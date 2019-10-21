@@ -17,4 +17,4 @@ simplejson==3.8.2
 six==1.10.0
 SQLAlchemy==1.0.14
 urllib3==1.16
-Werkzeug==0.11.10
+Werkzeug==0.15.3
